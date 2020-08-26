@@ -143,3 +143,11 @@ REST_AUTH_SERIALIZERS = {
 REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER':'users.serializers.SignupSerializer'
 }
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'X-CSRFTOKEN',
+]
+
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:3000','http://127.0.0.1:3000','http://localhost:3001'
+)
