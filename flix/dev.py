@@ -1,12 +1,9 @@
 '''Use this for development'''
 
 from .settings import *
-from .privatekeys import *
-
 ALLOWED_HOSTS += ['127.0.0.1','localhost:8000','localhost:3000']
-DEBUG = True
 SITE_ID = 2
-WSGI_APPLICATION = 'home.wsgi.dev.application'
+WSGI_APPLICATION = 'flix.wsgi.application'
 
 DATABASES = {
     'default': {
