@@ -1,10 +1,11 @@
-
+from corsheaders.defaults import default_headers
+from decouple import config
 
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+ALLOWED_HOSTS = []
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -16,7 +17,7 @@ SECRET_KEY = 'mu%1hlw9$6+5!v5cw5skvx=&=z+za^gqizc2ykm_t_#$@6(22q'
 DEBUG = True
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'users.backends.CustomerBackend',
+    'flix.backends.CustomerBackend',
 ]
 
 
@@ -31,6 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'simple_history',
+    'django.contrib.sites',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -39,17 +41,19 @@ INSTALLED_APPS = [
     'rest_auth.registration',
     'rest_framework',
     'rest_framework.authtoken',
-    'users',
+    'flix',
     "pinax.referrals",
     "mptt",
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'pinax.referrals.middleware.SessionJumpingMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -59,7 +63,11 @@ ROOT_URLCONF = 'flix.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'buildx'),
+             os.path.join(BASE_DIR, 'build'),
+            os.path.join(BASE_DIR, 'templates')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -78,8 +86,6 @@ WSGI_APPLICATION = 'flix.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-
-DEBUG_PROPAGATE_EXCEPTIONS = True 
 
 PINAX_REFERRALS_IP_ADDRESS_META_FIELD = True
 
@@ -115,20 +121,20 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_EMAIL_REQUIRED = True
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'flix.User'
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_UNIQUE_USERNAME = False
 ACCOUNT_USERNAME_VALIDATORS = 'home.settings.validator.custom_usename_validator'
 
 REST_AUTH_SERIALIZERS = {
-    'USER_DETAILS_SERIALIZER':'users.serializers.UserSerializer',
-    'TOKEN_SERIALIZER':'users.serializers.TokenSerializer',
-    'LOGIN_SERIALIZER': 'users.serializers.Login'
+    'USER_DETAILS_SERIALIZER':'flix.serializers.UserSerializer',
+    'TOKEN_SERIALIZER':'flix.serializers.TokenSerializer',
+    'LOGIN_SERIALIZER': 'flix.serializers.Login'
     
 }
 
 REST_AUTH_REGISTER_SERIALIZERS = {
-    'REGISTER_SERIALIZER':'users.serializers.SignupSerializer'
+    'REGISTER_SERIALIZER':'flix.serializers.SignupSerializer'
 }
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'X-CSRFTOKEN',
