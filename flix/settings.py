@@ -14,6 +14,10 @@ SECRET_KEY = 'mu%1hlw9$6+5!v5cw5skvx=&=z+za^gqizc2ykm_t_#$@6(22q'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'users.backends.CustomerBackend',
+]
 
 
 # Application definition
@@ -74,12 +78,10 @@ WSGI_APPLICATION = 'flix.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+
+DEBUG_PROPAGATE_EXCEPTIONS = True 
+
+PINAX_REFERRALS_IP_ADDRESS_META_FIELD = True
 
 
 # Password validation
@@ -128,3 +130,9 @@ REST_AUTH_SERIALIZERS = {
 REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER':'users.serializers.SignupSerializer'
 }
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'X-CSRFTOKEN',
+]
+
+OLD_PASSWORD_FIELD_ENABLED = True
+SIMPLE_HISTORY_HISTORY_CHANGE_REASON_USE_TEXT_FIELD=True
