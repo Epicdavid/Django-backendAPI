@@ -27,7 +27,6 @@ from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.validators import ASCIIUsernameValidator
 
 
-
 class Contact(serializers.Serializer):
     name = serializers.CharField()
     email = serializers.EmailField()
@@ -220,14 +219,17 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         return user
 
 class SignupSerializer(RegisterSerializer):
+    
     btc_wallet = serializers.CharField(max_length=300) 
     class Meta:
         model = User
-        fields = ('email','username','password','btc_wallet','user') 
+        fields = ('first_name','last_name','email','username','password','btc_wallet','user') 
 
 
     def get_cleaned_data(self):
         return {
+            'first_name': self.validated_data.get('first_name',''),
+            'last_name' : self.validated_data.get('last_name',''),
             'username': self.validated_data.get('username', ''),
             'password1': self.validated_data.get('password1', ''),
             'password2': self.validated_data.get('password2', ''),
