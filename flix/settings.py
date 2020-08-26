@@ -15,8 +15,6 @@ SECRET_KEY = 'mu%1hlw9$6+5!v5cw5skvx=&=z+za^gqizc2ykm_t_#$@6(22q'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -87,20 +85,7 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+
 
 
 # Internationalization
@@ -143,11 +128,3 @@ REST_AUTH_SERIALIZERS = {
 REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER':'users.serializers.SignupSerializer'
 }
-
-CORS_ALLOW_HEADERS = list(default_headers) + [
-    'X-CSRFTOKEN',
-]
-
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000','http://127.0.0.1:3000','http://localhost:3001'
-)
