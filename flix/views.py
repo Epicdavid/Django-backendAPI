@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated,AllowAny
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.mixins import UpdateModelMixin
 from django.core.mail import send_mail
+from django.core.exceptions import ObjectDoesNotExist
 
 from allauth.account.utils import send_email_confirmation
 from rest_framework.decorators import api_view
@@ -53,25 +54,20 @@ class Contact(APIView):
         serializer_class = serializers.Contact(data=request.data)
         if serializer_class.is_valid():
              data = serializer_class.validated_data
-             email_from = data.get('email')
-             subject = data.get('subject')
-             name = data.get('name')
-
-             company = data.get('company')
-            
-             phone = data.get('phone')
-             message = data.get('message')
-             
-             send_mail(subject, message, email_from,['support@site.com'])
+             sender_email = data.get('email')
+             sender_name = data.get('name') 
+             message = "{0} from {1} has sent you a new message:\n\n{2}.\n\n Phone: {3}".format(sender_name,sender_email, data.get('message'),data.get('phone'))
+             send_mail('New Enquiry', message, "***REMOVED***", ['***REMOVED***'])
              return Response({"success": "Your message has been sent, we will be in touch shortly"})
         return Response({'success': "Failed"}, status=status.HTTP_400_BAD_REQUEST)     
+
 
 class UserPartialUpdateView(GenericAPIView, UpdateModelMixin):
     
     '''
     You just need to provide the field which is to be modified.
     '''
-    permission_classes = [IsAuthenticated,] 
+    authentication_classes = [TokenAuthentication] 
     queryset = User.objects.all()
     serializer_class = serializers.UpdateUserSerializer
     def update(self, request, *args, **kwargs):
@@ -166,7 +162,7 @@ class PasswordResetView(GenericAPIView):
             status=status.HTTP_200_OK
         )
 
-class VerifyEmailView(APIView):
+class VerifyEmailView(GenericAPIView):
 
     def get_serializer(self, *args, **kwargs): 
         return VerifyEmailSerializer(*args, **kwargs)
@@ -174,14 +170,13 @@ class VerifyEmailView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        print(self.kwargs)
         self.kwargs['key'] = serializer.validated_data['key']
         try:
             confirmation = self.get_object()
             confirmation.confirm(self.request)
             return Response({'detail': _('Successfully confirmed email.')}, status=status.HTTP_200_OK)
-        except EmailConfirmation.DoesNotExist:
-            return Response({'detail': _('Error. Incorrect key.')}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'detail': _('Error. Incorrect key.')}, status=status.HTTP_400_BAD_REQUEST)
 
     def get_object(self, queryset=None):
         key = self.kwargs['key']
