@@ -57,7 +57,7 @@ class Contact(APIView):
              sender_email = data.get('email')
              sender_name = data.get('name') 
              message = "{0} from {1} has sent you a new message:\n\n{2}.\n\n Phone: {3}".format(sender_name,sender_email, data.get('message'),data.get('phone'))
-             send_mail('New Enquiry', message, "***REMOVED***", ['***REMOVED***'])
+             send_mail('New Enquiry', message, "support@domain.com", ['support@domain.com'])
              return Response({"success": "Your message has been sent, we will be in touch shortly"})
         return Response({'success': "Failed"}, status=status.HTTP_400_BAD_REQUEST)     
 
@@ -176,6 +176,7 @@ class VerifyEmailView(GenericAPIView):
             confirmation.confirm(self.request)
             return Response({'detail': _('Successfully confirmed email.')}, status=status.HTTP_200_OK)
         except Exception as e:
+            print(e)
             return Response({'detail': _('Error. Incorrect key.')}, status=status.HTTP_400_BAD_REQUEST)
 
     def get_object(self, queryset=None):
@@ -203,11 +204,11 @@ class NewEmailConfirmation(APIView):
         emailAddress = EmailAddress.objects.filter(user=user, verified=True).exists()
 
         if emailAddress:
-            return Response({'message': 'This email is already verified'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'This email is already verified'}, status=status.HTTP_200_OK)
         else:
             try:
                 send_email_confirmation(request, user=user)
-                return Response({'message': 'Email confirmation sent'}, status=status.HTTP_201_CREATED)
+                return Response({'message': 'Email confirmation sent'}, status=status.HTTP_200_OK)
             except APIException:
-                return Response({'message': 'This email does not exist, please create a new account'}, status=status.HTTP_403_FORBIDDEN)
+                return Response({'message': 'This email does not exist, please create a new account'}, status=status.HTTP_200_OK)
 
